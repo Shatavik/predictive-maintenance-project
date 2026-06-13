@@ -3,11 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-
-  // Replace with your PC's local IP address
-  // Example: http://192.168.1.5:8000/predict
   static const String baseUrl =
-      'http://YOUR_PC_IP:8000/predict';
+      'https://predictive-maintenance-project-axoe.onrender.com/predict';
 
   static Future<Map<String, dynamic>> predict({
     required int type,

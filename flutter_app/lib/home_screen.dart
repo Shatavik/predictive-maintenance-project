@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/predict_screen.dart';
 import 'package:flutter_app/history_screen.dart';
 import 'package:flutter_app/model_info_screen.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -40,14 +41,28 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        actions: const [
-          Icon(Icons.notifications_none, color: primary),
-          SizedBox(width: 16),
-          Icon(Icons.account_circle_outlined, color: primary),
-          SizedBox(width: 16),
-        ],
       ),
-      body: SingleChildScrollView(
+      body: ValueListenableBuilder(
+        valueListenable: Hive.box('prediction_history').listenable(),
+        builder: (context, box, _) {
+          final totalPredictions = box.length;
+
+          final healthyCount = box.values
+              .where((e) => e['status'] == 'Healthy')
+              .length;
+
+          final failureCount = box.values
+              .where((e) => e['status'] == 'Failure Risk')
+              .length;
+
+          final avgProbability = box.isEmpty
+              ? 0.0
+              : box.values
+              .map((e) =>
+              (e['failure_probability'] as num).toDouble())
+              .reduce((a, b) => a + b) /
+              box.length;
+          return SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
@@ -59,7 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: secondary.withValues(alpha: 0.3)),
               ),
-              child: const Column(
+              child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -80,7 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    'Overall Status:\nHealthy',
+                    failureCount > 0
+                        ? 'Overall Status:\nAttention Required'
+                        : 'Overall Status:\nHealthy',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 32,
@@ -90,7 +107,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 12),
                   Text(
-                    'All 42 connected units operating within nominal parameters.',
+                    totalPredictions == 0
+                        ? 'No predictions have been performed yet.'
+                        : 'AI-powered predictive maintenance system monitoring machine health.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.white70),
                   ),
@@ -105,11 +124,27 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               childAspectRatio: 1.2,
-              children: const [
-                _StatCard('Total Predictions', '1,284', primary),
-                _StatCard('Healthy Machines', '1,150', secondary),
-                _StatCard('Failure Risk', '12', Colors.redAccent),
-                _StatCard('Avg. Failure Prob', '8.5%', tertiary),
+              children: [
+                _StatCard(
+                  'Total Predictions',
+                  totalPredictions.toString(),
+                  primary,
+                ),
+                _StatCard(
+                  'Healthy Records',
+                  healthyCount.toString(),
+                  secondary,
+                ),
+                _StatCard(
+                  'Failure Risk',
+                  failureCount.toString(),
+                  Colors.redAccent,
+                ),
+                _StatCard(
+                  'Avg. Failure Prob',
+                  '${avgProbability.toStringAsFixed(1)}%',
+                  tertiary,
+                ),
               ],
             ),
             const SizedBox(height: 24),
@@ -156,7 +191,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-      ),
+      );
+    },
+  ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color(0xFF0A1A2A),
         selectedItemColor: secondary,
