@@ -11,7 +11,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-model_path = BASE_DIR / "models" / "original_model.pkl"
+model_path = BASE_DIR / "models" / "balanced_model.pkl"
 
 model = joblib.load(model_path)
 
