@@ -58,7 +58,7 @@ def predict(data: MachineData):
 @app.get("/model-info")
 def model_info():
     return {
-        "model": "Random Forest",
+        "model": "Balanced Random Forest",
         "dataset": "AI4I Predictive Maintenance Dataset",
         "features": 6,
         "target": "Machine Failure"

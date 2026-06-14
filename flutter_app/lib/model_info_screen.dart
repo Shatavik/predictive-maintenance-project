@@ -118,10 +118,10 @@ class ModelInfoScreen extends StatelessWidget {
               mainAxisSpacing: 12,
               childAspectRatio: 1.15,
               children: const [
-                _MetricCard("Accuracy", "98.50%"),
-                _MetricCard("Precision", "88%"),
-                _MetricCard("Recall", "65%"),
-                _MetricCard("F1 Score", "75%"),
+                _MetricCard("Accuracy", "98.25%"),
+                _MetricCard("Precision", "75%"),
+                _MetricCard("Recall", "74%"),
+                _MetricCard("F1 Score", "74%"),
               ],
             ),
 
