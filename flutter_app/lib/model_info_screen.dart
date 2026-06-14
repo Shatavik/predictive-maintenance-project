@@ -60,7 +60,7 @@ class ModelInfoScreen extends StatelessWidget {
                     ],
                   ),
                   SizedBox(height: 20),
-                  Text("Algorithm: Random Forest"),
+                  Text("Algorithm: Balanced Random Forest"),
                   SizedBox(height: 6),
                   Text("Features: 6 Sensor Inputs"),
                   SizedBox(height: 6),
